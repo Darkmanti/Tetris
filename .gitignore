@@ -1,0 +1,11 @@
+# Project
+[Bb]uild/
+
+# Visual Studio
+.vs/
+UnityDebug/
+UnityRelease/
+src/*.sln
+src/*.vcxproj
+src/*.filters
+src/*.user
