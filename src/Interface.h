@@ -16,6 +16,8 @@ struct MainMenu
 	u32 VAO;
 	u32 texture;
 	u32 shader;
+	m4 projection;
+	m4 view;
 };
 
 void InitMainMenuInterface(MainMenu* mMenu);

@@ -5,8 +5,6 @@ void Tetris()
 	MainMenu mMenu = {};
 	InitMainMenuInterface(&mMenu);
 
-	glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
-
 	while (true)
 	{
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))

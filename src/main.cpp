@@ -17,6 +17,7 @@ GLFuncTable funcTable = {};
 
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
+	SetProcessDPIAware();
 	con::InitParam(lpCmdLine);
 	con::Out("RABOTAET CONSOL\n");
 
@@ -50,17 +51,18 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		return NULL;
 	}
 
-	hMainWnd = CreateWindow(windowClass.lpszClassName,
-		"Tetris", // им€ окна
-		WS_OVERLAPPEDWINDOW, // режимы отображени€ окошка
-		CW_USEDEFAULT, // положение окна по оси х //CW_USEDEFAULT
-		CW_USEDEFAULT, // позици€ окна по оси у //CW_USEDEFAULT
-		1280, // ширина окошка //CW_USEDEFAULT
-		720, // высота окна
-		NULL, // дескриптор родительского окошка
-		NULL, // дескриптор меню
-		hInstance, // дескриптор экземпл€ра приложени€
-		NULL); // ничего не передаЄм из WndProc
+	hMainWnd = CreateWindow(
+		windowClass.lpszClassName, // name windows class
+		"Tetris", // name window
+		WS_OVERLAPPEDWINDOW, // The style
+		CW_USEDEFAULT, // position window on x axis //CW_USEDEFAULT
+		CW_USEDEFAULT, // position window on y axis //CW_USEDEFAULT
+		1920, // width window //CW_USEDEFAULT
+		1080, // height window
+		NULL, // A handle to the parent or owner window
+		NULL, // A handle to a menu
+		hInstance, // A handle to the instance
+		NULL); // ????????????????????
 
 	if (!hMainWnd)
 	{
@@ -71,6 +73,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	ShowWindow(hMainWnd, nCmdShow);
 	UpdateWindow(hMainWnd);
 
+	// Create Context OpenGL
 	CreateContextOpenGL(hMainWnd);
 
 	// Load OpenGL functions
@@ -91,24 +94,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(NULL);
 		break;
 	case WM_KEYDOWN:
-		/*switch (wParam)
+		switch (wParam)
 		{
-		case VK_LEFT:
-			con::Out("left\n");
-			break;
-		case VK_RIGHT:
-			con::Out("right\n");
-			break;
-		case VK_DOWN:
-			con::Out("down\n");
-			break;
-		case VK_UP:
-			con::Out("up\n");
+		case VK_ESCAPE:
+			PostQuitMessage(NULL);
 			break;
 		default:
-			con::Out("non char\n");
 			break;
-		}*/
+		}
 	case WM_MOVE:
 		// x and y coord position of window
 		//Outf("%i   %i\n", (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));

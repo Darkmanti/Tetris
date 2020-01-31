@@ -1,17 +1,54 @@
 #include "Interface.h"
 
+// Temporable structures and functions
 void InitMainMenuInterface(MainMenu* mMenu)
 {
-	glViewport(0, 0, 1280, 720);
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
+	glViewport(0, 0, 1920, 1080);
 
-	f32 vertices[] =
-	{
-		0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+	f32 vertices[] = {
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
 	glGenBuffers(1, &mMenu->VBO);
@@ -37,7 +74,7 @@ void InitMainMenuInterface(MainMenu* mMenu)
 	// Texture =================================================================================
 	stbi_set_flip_vertically_on_load(true);
 	int w, h, nrComp;
-	unsigned char* image = stbi_load("../res/Interface/container.jpg", &w, &h, &nrComp, 0);
+	unsigned char* image = stbi_load("../res/Interface/container.bmp", &w, &h, &nrComp, 0);
 
 	glGenTextures(1, &mMenu->texture);
 	glBindTexture(GL_TEXTURE_2D, mMenu->texture);
@@ -53,18 +90,26 @@ void InitMainMenuInterface(MainMenu* mMenu)
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	stbi_image_free(image);
+
+	mMenu->projection = PerspectiveOpenGLRH(75, 1920, 1080, 0.1f, 100.0f);
+	mMenu->view = Translate(Identity4(), V3(0.0f, 0.0f, -3.0f));
 }
 
 void DrawMainMenuInterface(MainMenu* mMenu)
 {
-	m4 trans = Identity4();
-	trans = Rotate(trans, 0, V3(0.0f, 0.0f, 1.0f));
-	trans = Scale(trans, V3(1.0f, 1.0f, 1.0f));
+	i32 modelLoc = glGetUniformLocation(mMenu->shader, "model");
 
-	glUniformMatrix4fv(glGetUniformLocation(mMenu->shader, "transform"), 1, GL_FALSE, trans.data);
+	glUniformMatrix4fv(glGetUniformLocation(mMenu->shader, "projection"), 1, GL_FALSE, mMenu->projection.data);
+	glUniformMatrix4fv(glGetUniformLocation(mMenu->shader, "view"), 1, GL_FALSE, mMenu->view.data);
+
+	m4 model = Translate(Identity4(), V3(0.0f, 0.0f, 0.0f));
+	_SYSTEMTIME time = {};
+	GetLocalTime(&time);
+	model = Rotate(model, time.wMilliseconds / 4, V3(1.0f, 1.0f, 1.0f));
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data);
 
 	glBindTexture(GL_TEXTURE_2D, mMenu->texture);
 	glBindVertexArray(mMenu->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 }

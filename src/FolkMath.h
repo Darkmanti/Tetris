@@ -1,4 +1,6 @@
 #pragma once
+// inspired by hypermath
+// https://github.com/swarzzy/sokoban/blob/master/src/hypermath.h
 #include <stdint.h>
 #include <math.h>
 
@@ -1258,10 +1260,12 @@ namespace flm
         f32 AR = width / height;
         f32 tanHalfFov = Tan(ToRad(fovDeg) * 0.5f);
 
-        m._11 = 1.0f / (AR * tanHalfFov); //AR * (1.0f / tanHalfFov);
+        // TODO: it requires a solution
+        // the expression in the comment stretches the image into a rectangle at 16:9
+        m._11 = 1.0f / (AR * tanHalfFov); // AR * (1.0f / tanHalfFov);
         m._22 = 1.0f / tanHalfFov;
         m._33 = -(f + n) / (f - n);
-        m._34 = n * (f / (f - n));
+        m._34 = (-2 * f * n) / (f - n);
         m._43 = -1.0f;
 
         return m;
@@ -1325,17 +1329,17 @@ namespace flm
         m._11 = xAxis.x;
         m._12 = xAxis.y;
         m._13 = xAxis.z;
-        m._14 = -Dot(xAxis, position);
+        m._14 = Dot(xAxis, position);
 
         m._21 = yAxis.x;
         m._22 = yAxis.y;
         m._23 = yAxis.z;
-        m._24 = -Dot(yAxis, position);
+        m._24 = Dot(yAxis, position);
 
         m._31 = zAxis.x;
         m._32 = zAxis.y;
         m._33 = zAxis.z;
-        m._34 = -Dot(zAxis, position);
+        m._34 = Dot(zAxis, position);
 
         m._41 = 0.0f;
         m._42 = 0.0f;

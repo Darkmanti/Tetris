@@ -7,7 +7,7 @@ void ShaderCompileErrors(u32 shader, const char* type)
 	// NOTE: type need?
 	i32 success;
 	char infolog[1024];
-	if (type != "PROGRAM")
+	if (strcmp(type ,"PROGRAM") != 0)
 	{
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 		if (!success)
@@ -77,6 +77,8 @@ bool CreateShader(u32& program, const char* vertexPath, const char* fragmentPath
 
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
+	free(vertexCode);
+	free(fragmentCode);
 
 	return true;
 }
