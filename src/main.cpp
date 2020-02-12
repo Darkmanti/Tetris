@@ -21,7 +21,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	con::InitParam(lpCmdLine);
 	con::Out("RABOTAET CONSOL\n");
 
-	con::Outf("privet parametri: %i, %s", 20, "rubley\n");
+	con::Outf("privet parametri: %i, %s\n", 20, "rubley");
 
 	HICON icon = (HICON)LoadImage(NULL, TEXT("../res/icon.ico"), IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 	if (!icon)

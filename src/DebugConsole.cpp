@@ -168,7 +168,7 @@ namespace con
 				}
 				case 'f':
 				{
-					double value = va_arg(args, double);
+					float value = va_arg(args, double);
 					int numDigit = 6;
 					float tempValue = value;
 					while (tempValue > 1)

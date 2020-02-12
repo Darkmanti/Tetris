@@ -74,7 +74,10 @@ void InitMainMenuInterface(MainMenu* mMenu)
 	// Texture =================================================================================
 	stbi_set_flip_vertically_on_load(true);
 	int w, h, nrComp;
-	unsigned char* image = stbi_load("../res/Interface/container.bmp", &w, &h, &nrComp, 0);
+	u8* image = NULL;
+	//u8* imageSTB = NULL;
+	//imageSTB = stbi_load("../res/Interface/container.bmp", &w, &h, &nrComp, NULL);
+	image = loaders::LoadImageU8("../res/Interface/container.bmp", &w, &h, &nrComp, NULL);
 
 	glGenTextures(1, &mMenu->texture);
 	glBindTexture(GL_TEXTURE_2D, mMenu->texture);
@@ -89,7 +92,8 @@ void InitMainMenuInterface(MainMenu* mMenu)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	stbi_image_free(image);
+	//stbi_image_free(imageSTB);
+	free(image);
 
 	mMenu->projection = PerspectiveOpenGLRH(75, 1920, 1080, 0.1f, 100.0f);
 	mMenu->view = Translate(Identity4(), V3(0.0f, 0.0f, -3.0f));
