@@ -5,11 +5,6 @@
 
 namespace loaders
 {
-	void DefineType()
-	{
-
-	}
-
 	u8* LoadBMPU8(u8* buffer, int* x, int* y, int* comp, int* reqComp)
 	{
 		BITMAPFILEHEADER header = {};
@@ -102,8 +97,11 @@ namespace loaders
 
 		if (infoHeaderSize == 12)
 		{
-			Outf("Error this BMP info == 12 bytes unsupported\n");
-			return 0;
+			*x = (int)BMPCOREHEADER.bcWidth;
+			*y = (int)BMPCOREHEADER.bcHeight;
+			*comp = (int)(BMPCOREHEADER.bcBitCount / 8);
+
+			Outf("Error BMPCOREHEADER not supported\n");
 		}
 		else if (infoHeaderSize == 40)
 		{
@@ -111,9 +109,23 @@ namespace loaders
 			*y = (int)BMPINFOHEADER.biHeight;
 			*comp = (int)(BMPINFOHEADER.biBitCount / 8);
 
-			if (BMPINFOHEADER.biBitCount == 24)
+			result = (u8*)malloc((*x) * (*y) * (*comp));
+
+			//TODO: conversion from 1 channel to 3
+			if (BMPINFOHEADER.biBitCount == 8)
 			{
-				result = (u8*)malloc(BMPINFOHEADER.biSizeImage);
+				u8* mask = buffer + header.bfOffBits;
+				for (int i = 0; i < BMPINFOHEADER.biWidth * BMPINFOHEADER.biHeight; i++)
+				{
+					result[i] = mask[i];
+				}
+			}
+			else if (BMPINFOHEADER.biBitCount == 16)
+			{
+				Outf("Error BMPINFOHEADER 16 bit not supported");
+			}
+			else if (BMPINFOHEADER.biBitCount == 24)
+			{
 				RGBTRIPLE* mask = (RGBTRIPLE*)(buffer + header.bfOffBits);
 				for (int i = 0; i < BMPINFOHEADER.biWidth * BMPINFOHEADER.biHeight; i++)
 				{
@@ -123,17 +135,59 @@ namespace loaders
 				}
 				
 			}
+			else if (BMPINFOHEADER.biBitCount == 32)
+			{
+				RGBQUAD* mask = (RGBQUAD*)(buffer + header.bfOffBits);
+				for (int i = 0; i < BMPINFOHEADER.biWidth * BMPINFOHEADER.biHeight; i++)
+				{
+					result[i * 4] = mask[i].rgbRed;
+					result[(i * 4) + 1] = mask[i].rgbGreen;
+					result[(i * 4) + 2] = mask[i].rgbBlue;
+					result[(i * 4) + 3] = mask[i].rgbReserved;
+				}
+			}
 
 		}
 		else if (infoHeaderSize == 108)
 		{
+			*x = (int)BMPV4HEADER.bV4Width;
+			*y = (int)BMPV4HEADER.bV4Height;
+			*comp = (int)(BMPV4HEADER.bV4BitCount / 8);
+
 			Outf("Error this BMP info == 108 bytes unsupported\n");
-			return 0;
 		}
 		else if (infoHeaderSize == 124)
 		{
-			Outf("Error this BMP info == 124 bytes unsupported\n");
-			return 0;
+			*x = (int)BMPV5HEADER.bV5Width;
+			*y = (int)BMPV5HEADER.bV5Height;
+			*comp = (int)(BMPV5HEADER.bV5BitCount / 8);
+
+			result = (u8*)malloc((*x) * (*y) * (*comp));
+
+			if (BMPV5HEADER.bV5BitCount == 8)
+			{
+				Outf("Error BMPV5HEADER 8 bit not supported");
+			}
+			else if (BMPV5HEADER.bV5BitCount == 16)
+			{
+				Outf("Error BMPV5HEADER 16 bit not supported");
+			}
+			else if (BMPV5HEADER.bV5BitCount == 24)
+			{
+				Outf("Error BMPV5HEADER 24 bit not supported");
+			}
+			else if (BMPV5HEADER.bV5BitCount == 32)
+			{
+				RGBQUAD* mask = (RGBQUAD*)(buffer + header.bfOffBits);
+				for (int i = 0; i < BMPV5HEADER.bV5Width * BMPV5HEADER.bV5Height; i++)
+				{
+					result[i * 4] = mask[i].rgbRed;
+					result[(i * 4) + 1] = mask[i].rgbGreen;
+					result[(i * 4) + 2] = mask[i].rgbBlue;
+					result[(i * 4) + 3] = mask[i].rgbReserved;
+				}
+			}
+
 		}
 
 		return result;

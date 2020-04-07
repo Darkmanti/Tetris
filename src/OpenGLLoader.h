@@ -739,6 +739,8 @@ union GLFuncTable
 #define glVertexAttribP4ui						funcTable._glVertexAttribP4ui
 #define glVertexAttribP4uiv						funcTable._glVertexAttribP4uiv
 
+GLFuncTable funcTable = {};
+
 GLFuncTable LoadOpenGLFunctions();
 
 void CreateContextOpenGL(HWND hWNDToDC);

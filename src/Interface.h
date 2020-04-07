@@ -1,13 +1,10 @@
 #pragma once
 
+// Temporable files for test
+//#include "stb_image.h"
+
 #include "ImageLoader.h"
 #include "FontLoader.h"
-
-// Temporable files for test
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_TRUETYPE_IMPLEMENTATION
-#include "stb_image.h"
-#include "stb_truetype.h"
 
 // Temporable structures and functions
 struct MainMenu
@@ -18,6 +15,8 @@ struct MainMenu
 	u32 shader;
 	m4 projection;
 	m4 view;
+
+	Font font;
 };
 
 void InitMainMenuInterface(MainMenu* mMenu);

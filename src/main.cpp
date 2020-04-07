@@ -1,9 +1,12 @@
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_TRUETYPE_IMPLEMENTATION
+
 #include <winsock2.h>
 #include <windows.h>
 #include "glcorearb.h"
 #include "wgl.h"
 #include "wglext.h"
-#include "FolkMath.h"
+#include "Math.h"
 #include "OpenGLLoader.h"
 #include "DebugConsole.h"
 #include "Tetris.h"
@@ -13,11 +16,11 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HWND hMainWnd = {};
 MSG msg = {};
 
-GLFuncTable funcTable = {};
-
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
+	//Disable windows app scaling
 	SetProcessDPIAware();
+
 	con::InitParam(lpCmdLine);
 	con::Out("RABOTAET CONSOL\n");
 
