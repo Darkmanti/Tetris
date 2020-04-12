@@ -45,7 +45,8 @@ Font InitFont(u32 shader, i32 heightFont, i32 glyphs, const char* fileName, i32 
 	font.widthBitMap = width;
 	font.glyphs = glyphs;
 
-	// delete!!!
+	free(ttf_buffer);
+	free(tempBitmap);
 
 	return font;
 }
@@ -92,14 +93,14 @@ void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projec
 			glBindTexture(GL_TEXTURE_2D, font.fontBitMap);
 
 			m4 model = Translate(Identity4(), V3(0.0f, 5.0f, 0.0f));
-			model = Scale(model, V3(0.2f, 0.2f, 0.2f));
+			model = Scale(model, V3(0.1f, 0.1f, 0.1f));
 
 			glUniformMatrix4fv(glGetUniformLocation(font.shader, "model"), 1, GL_FALSE, model.data);
 			glUniformMatrix4fv(glGetUniformLocation(font.shader, "projection"), 1, GL_FALSE, projection.data);
 			glUniform3f(glGetUniformLocation(font.shader, "fontColor"), color.r, color.g, color.b);
 
 			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindVertexArray(0);
 			glDisable(GL_BLEND);

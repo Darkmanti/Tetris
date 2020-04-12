@@ -106,16 +106,6 @@ namespace flm
         return (i32)floorf(val);
     }
 
-    inline f32 Lerp(f32 a, f32 b, f32 t)
-    {
-        if (t < 0.0f)
-            return a;
-        else if (t > 1.0f)
-            return b;
-        else
-            return ((1 - t) * a + t * b);
-    }
-
     // NOTE: https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
     inline constexpr u32 NextPowerOfTwo(u32 v)
     {
@@ -595,19 +585,6 @@ namespace flm
     {
         f32 invLength = 1.0f / Length(v);
         return v4{ v.x * invLength , v.y * invLength, v.z * invLength, v.w * invLength };
-    }
-
-    inline v2 Lerp(v2 a, v2 b, f32 t)
-    {
-        return v2{ Lerp(a.x, b.x, t), 
-                   Lerp(a.y, b.y, t) };
-    }
-
-    inline v3 Lerp(v3 a, v3 b, f32 t)
-    {
-        return v3{ Lerp(a.x, b.x, t), 
-                   Lerp(a.y, b.y, t), 
-                   Lerp(a.z, b.z, t) };
     }
 
     inline f32 Dot(v2 l, v2 r)

@@ -3,15 +3,17 @@
 
 #include <winsock2.h>
 #include <windows.h>
+#include <stdarg.h>
 #include "glcorearb.h"
 #include "wgl.h"
 #include "wglext.h"
 #include "Math.h"
 #include "OpenGLLoader.h"
 #include "DebugConsole.h"
+#include "Settings.h"
 #include "Tetris.h"
 
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 HWND hMainWnd = {};
 MSG msg = {};
@@ -26,6 +28,8 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	con::Outf("privet parametri: %i, %s\n", 20, "rubley");
 
+	InitSettingsFunc();
+
 	HICON icon = (HICON)LoadImage(NULL, TEXT("../res/icon.ico"), IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 	if (!icon)
 	{
@@ -34,28 +38,24 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		con::SetConColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	}
 
-	WNDCLASSEX windowClass = {};
-	windowClass.cbSize = sizeof(WNDCLASSEX);
-	windowClass.style = CS_HREDRAW | CS_VREDRAW;
-	windowClass.lpfnWndProc = WndProc;
-	windowClass.cbClsExtra = 0;
-	windowClass.cbWndExtra = 0;
-	windowClass.hInstance = hInstance;
-	windowClass.hIcon = icon;
-	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	windowClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	windowClass.lpszMenuName = NULL;
-	windowClass.lpszClassName = "MainTetrisWindow";
-	windowClass.hIconSm = icon;
+	WNDCLASSEX MainWindowClass = {};
+	MainWindowClass.cbSize = sizeof(WNDCLASSEX);
+	MainWindowClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+	MainWindowClass.lpfnWndProc = MainWndProc;
+	MainWindowClass.hInstance = hInstance;
+	MainWindowClass.hIcon = icon;
+	MainWindowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	MainWindowClass.lpszClassName = "MainTetrisWindow";
+	MainWindowClass.hIconSm = icon;
 
-	if (!RegisterClassEx(&windowClass))
+	if (!RegisterClassEx(&MainWindowClass))
 	{
 		MessageBox(NULL, "error to creae a class", "error", MB_OK);
 		return NULL;
 	}
 
 	hMainWnd = CreateWindow(
-		windowClass.lpszClassName, // name windows class
+		MainWindowClass.lpszClassName, // name windows class
 		"Tetris", // name window
 		WS_OVERLAPPEDWINDOW, // The style
 		CW_USEDEFAULT, // position window on x axis //CW_USEDEFAULT
@@ -89,27 +89,37 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	return msg.wParam;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
-	case WM_DESTROY:
-		PostQuitMessage(NULL);
-		break;
-	case WM_KEYDOWN:
-		switch (wParam)
+		case WM_DESTROY:
 		{
-		case VK_ESCAPE:
 			PostQuitMessage(NULL);
-			break;
+		} break;
+		case WM_KEYDOWN:
+		{
+			switch (wParam)
+			{
+				case VK_ESCAPE:
+				{
+					PostQuitMessage(NULL);
+				} break;
+			}
+		} break;
+		case WM_MOVE:
+		{
+			// x and y coord position of window
+			Outf("%i   %i\n", (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
+		} break;
+		case WM_SIZE:
+		{
+			// something
+		} break;
 		default:
-			break;
-		}
-	case WM_MOVE:
-		// x and y coord position of window
-		//Outf("%i   %i\n", (int)(short)LOWORD(lParam), (int)(short)HIWORD(lParam));
-	default:
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		{
+			return DefWindowProc(hWnd, uMsg, wParam, lParam);
+		} break;
 	}
 	return NULL;
 }

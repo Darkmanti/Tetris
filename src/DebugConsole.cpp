@@ -29,6 +29,8 @@ namespace con
 			if (strcmp(param[i], "-cmd") == 0 && debugConsole == NULL)
 			{
 				AllocConsole();
+				//can use to bind new console
+				//freopen("CONOUT$", "w", stdout);
 				debugConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 				SetConsoleTitle("Tetris_Console");
 			}
@@ -40,6 +42,16 @@ namespace con
 	void SetConColor(int color)
 	{
 		SetConsoleTextAttribute(debugConsole, color);
+	}
+
+	void SetConFontColorRed()
+	{
+		SetConColor(FOREGROUND_RED);
+	}
+
+	void SetConFontColorWhite()
+	{
+		SetConColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 	}
 
 	// russian language
@@ -326,7 +338,7 @@ namespace con
 					i = i + 1;
 					break;
 				}
-				default:{}
+				invalid_default()
 				}
 					i = i + 2;
 			}
@@ -337,5 +349,15 @@ namespace con
 			}
 		}
 		WriteConsole(debugConsole, result, strlen(result), NULL, NULL);
+		va_end(args);
+	}
+
+	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr, ...)
+	{
+		SetConFontColorRed();
+		Outf("[Assertion failed] ");
+		SetConFontColorWhite();
+		Outf("Expression (%s) result is false\n", assertStr);
+		Outf("File: %s, function: %s, line: %i.\n", file, func, line);
 	}
 }

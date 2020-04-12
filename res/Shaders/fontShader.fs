@@ -10,5 +10,5 @@ uniform vec3 fontColor;
 
 void main()
 {
-	color = vec4(texture(ourTexture, TexCoord)) * vec4(fontColor, 1.0f);
+	color = vec4(texture(ourTexture, TexCoord).r) * vec4(fontColor, 1.0f);
 }

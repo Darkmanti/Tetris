@@ -97,7 +97,7 @@ void InitMainMenuInterface(MainMenu* mMenu)
 	//fonts
 	u32 tempShader;
 	CreateShader(tempShader, "../res/Shaders/fontShader.vs", "../res/Shaders/fontShader.fs", "");
-	mMenu->font = InitFont(tempShader, 32, 256, "../res/Fonts/OpenSans-Semibold.ttf", 32, 512, 512);
+	mMenu->font = InitFont(tempShader, 32, 256, "../res/Fonts/dragon_alphabet.ttf", 32, 512, 512);
 
 	//stbi_image_free(image);
 	free(image);
@@ -126,5 +126,5 @@ void DrawMainMenuInterface(MainMenu* mMenu)
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 
-	PrintFont(mMenu->font, 1.1f, 6.1f, L"Chlen", V3(1.0f, 0.0f, 0.0f), mMenu->projection);
+	PrintFont(mMenu->font, 0.0f, 0.0f, L"4ROL", V3(0.631f, 0.631f, 0.631f), mMenu->projection);
 }

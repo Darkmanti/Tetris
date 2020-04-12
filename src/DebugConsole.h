@@ -3,6 +3,10 @@
 
 #define USE_NAMESPACE_CON
 
+#define ASSERT(expr, ...) do { if (!(expr)) {LogAssert(__FILE__, __func__, __LINE__, #expr, __VA_ARGS__); __debugbreak();}} while(false)
+
+#define invalid_default() default:{ASSERT(false);}
+
 namespace con
 {
 	HANDLE debugConsole = NULL;
@@ -10,6 +14,8 @@ namespace con
 	bool InitParam(const char* CmdLine);
 
 	void SetConColor(int color);
+	void SetConFontColorRed();
+	void SetConFontColorWhite();
 
 	void SetConLangRussia();
 	void SetConLangDefault();
@@ -26,6 +32,8 @@ namespace con
 	void Out(double value);
 
 	void Outf(const char* string, ...);
+
+	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr, ...);
 }
 
 #if defined(USE_NAMESPACE_CON)
