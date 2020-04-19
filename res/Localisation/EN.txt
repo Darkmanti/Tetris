@@ -1,0 +1,5 @@
+locEnum_Tetris = "Tetris"
+locEnum_Singleplayer = "Singleplayer"
+locEnum_Multiplayer = "Multiplayer"
+locEnum_Settings = "Settings"
+locEnum_Exit = "Exit"

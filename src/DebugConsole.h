@@ -11,6 +11,10 @@ namespace con
 {
 	HANDLE debugConsole = NULL;
 
+	u8* ReadFileToBuffer(const char* fileName);
+	u8* ReadFileToBuffer(const char* fileName, PLARGE_INTEGER fileSize);
+	void FreeBufferFromFile(u8* buffer);
+
 	bool InitParam(const char* CmdLine);
 
 	void SetConColor(int color);

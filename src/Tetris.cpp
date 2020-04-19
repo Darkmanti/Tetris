@@ -2,19 +2,26 @@
 
 void Tetris()
 {
-	MainMenu mMenu = {};
+	InitSettingsFunc();
 	InitMainMenuInterface(&mMenu);
 
 	while (true)
 	{
-		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, hMainWnd, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
 			{
 				break;
 			}
+			if (msg.message == WM_MOUSEMOVE)
+			{
+				settings.cursorPos.x = (int)(short)LOWORD(msg.lParam);
+				settings.cursorPos.y = settings.MainWindowHeight - (int)(short)HIWORD(msg.lParam);
+				//Outf("%i    %i\n", settings.cursorPos.x, settings.cursorPos.y);
+			}
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			//Outf("%i\n", msg.message);
 		}
 
 		Control();
@@ -57,22 +64,24 @@ bool KeyDown(int key)
 
 void Control()
 {
+	// Each KeyPressed corresponds KeyReleased
+
+	// perhaps add check for render window Rect
+	if (KeyPressed(VK_LBUTTON))
+	{
+		Outf("%i    %i\n", settings.cursorPos.x, settings.cursorPos.y);
+	}
+
 	if (KeyPressed(VK_LEFT))
 	{
 		con::Out("LEFT press\n");
 		glClearColor(0.0f, 0.7f, 0.0f, 1.0f);
-		/*con::Out("you are server\n");
-		InitNetSocket();
-		HostServer();*/
 	}
 
 	if (KeyPressed(VK_RIGHT))
 	{
 		con::Out("RIGHT press\n");
 		glClearColor(0.0f, 0.0f, 0.7f, 1.0f);
-		/*con::Out("you are client\n");
-		InitNetSocket();
-		HostClient();*/
 	}
 
 	if (KeyPressed(VK_UP))
@@ -81,10 +90,15 @@ void Control()
 		glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
 	}
 
-	for (int i = 0; i < 256; i++)
+	if (KeyReleased(VK_LEFT)){}
+	if (KeyReleased(VK_RIGHT)) {}
+	if (KeyReleased(VK_UP)) {}
+	if (KeyReleased(VK_LBUTTON)) {}
+
+	/*for (int i = 0; i < 256; i++)
 	{
 		KeyReleased(i);
-	}
+	}*/
 
 	if (KeyDown(VK_UP))
 	{

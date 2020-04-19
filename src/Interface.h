@@ -1,12 +1,16 @@
 #pragma once
 
-// Temporable files for test
-//#include "stb_image.h"
-
 #include "ImageLoader.h"
 #include "FontLoader.h"
 
-// Temporable structures and functions
+struct MenuElement
+{
+	u32 element;
+
+	u16 x0, y0;
+	u16 x1, y1;
+};
+
 struct MainMenu
 {
 	u32 VBO;

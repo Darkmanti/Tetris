@@ -5,6 +5,7 @@ in vec2 TexCoord;
 out vec4 color;
 
 uniform sampler2D ourTexture;
+uniform sampler2D ourTexture2;
 
 uniform vec3 fontColor;
 

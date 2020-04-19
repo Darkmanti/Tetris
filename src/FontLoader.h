@@ -17,14 +17,7 @@ Font InitFont(u32 shader, i32 heightFont, i32 glyphs, const char* fileName, i32 
 {
 	Font font = {};
 
-	DWORD read;
-	HANDLE file = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, NULL, NULL);
-	LARGE_INTEGER fileSize;
-	GetFileSizeEx(file, &fileSize);
-	u8* ttf_buffer = (u8*)malloc(fileSize.QuadPart + 1);
-	ReadFile(file, ttf_buffer, fileSize.QuadPart, &read, NULL);
-	CloseHandle(file);
-	ttf_buffer[fileSize.QuadPart] = '\0';
+	u8* ttf_buffer = ReadFileToBuffer(fileName);
 
 	u8* tempBitmap = (u8*)malloc(width * height);
 	stbtt_bakedchar* cdata = (stbtt_bakedchar*)malloc(glyphs * sizeof(stbtt_bakedchar));
@@ -45,7 +38,7 @@ Font InitFont(u32 shader, i32 heightFont, i32 glyphs, const char* fileName, i32 
 	font.widthBitMap = width;
 	font.glyphs = glyphs;
 
-	free(ttf_buffer);
+	FreeBufferFromFile(ttf_buffer);
 	free(tempBitmap);
 
 	return font;
@@ -56,8 +49,9 @@ void DeleteFont(Font font)
 	free(font.cdata);
 }
 
-void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projection)
+void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projection, m4 model, f32 &maxX, f32 &maxY)
 {
+	y = -y;
 	while (*string)
 	{
 		if (*string >= font.firstChar && *string < font.glyphs)
@@ -65,7 +59,7 @@ void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projec
 			stbtt_aligned_quad q;
 			stbtt_GetBakedQuad(font.cdata, font.widthBitMap, font.heightBitMap, 
 				*string - font.firstChar, &x, &y, &q, 1);
-
+			
 			GLfloat vertices[] = {
 				q.x0, -q.y0, 0.0f, q.s0, q.t0,
 				q.x1, -q.y0, 0.0f, q.s1, q.t0,
@@ -74,6 +68,11 @@ void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projec
 				q.x0, -q.y1, 0.0f, q.s0, q.t1,
 				q.x0, -q.y0, 0.0f, q.s0, q.t0
 			};
+
+			if (q.x1 > maxX)
+				maxX = q.x1;
+			if (-q.y0 > maxY)
+				maxY = -q.y0;
 
 			GLuint VAO, VBO;
 			glGenVertexArrays(1, &VAO);
@@ -92,12 +91,10 @@ void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projec
 			glUseProgram(font.shader);
 			glBindTexture(GL_TEXTURE_2D, font.fontBitMap);
 
-			m4 model = Translate(Identity4(), V3(0.0f, 5.0f, 0.0f));
-			model = Scale(model, V3(0.1f, 0.1f, 0.1f));
-
 			glUniformMatrix4fv(glGetUniformLocation(font.shader, "model"), 1, GL_FALSE, model.data);
 			glUniformMatrix4fv(glGetUniformLocation(font.shader, "projection"), 1, GL_FALSE, projection.data);
 			glUniform3f(glGetUniformLocation(font.shader, "fontColor"), color.r, color.g, color.b);
+			//glUniform1i(glGetUniformLocation(font.shader, "ourTexture2"), texture);
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -170,14 +170,12 @@ namespace con
 				{
 					strcpy(temp, va_arg(args, char*));
 					strcat(result, temp);
-					break;
-				}
+				} break;
 				case 'i':
 				{
 					_itoa(va_arg(args, int), temp, 10);
 					strcat(result, temp);
-					break;
-				}
+				} break;
 				case 'f':
 				{
 					float value = va_arg(args, double);
@@ -190,8 +188,7 @@ namespace con
 					}
 					_gcvt(value, numDigit, temp);
 					strcat(result, temp);
-					break;
-				}
+				} break;
 				case 'm':
 				{
 					switch (string[i + 2])
@@ -218,8 +215,7 @@ namespace con
 
 							strcat(result, temp);
 						}
-						break;
-					}
+					} break;
 					case '3':
 					{
 						m3 value = va_arg(args, m3);
@@ -242,8 +238,7 @@ namespace con
 
 							strcat(result, temp);
 						}
-						break;
-					}
+					} break;
 					case '4':
 					{
 						m4 value = va_arg(args, m4);
@@ -266,13 +261,11 @@ namespace con
 
 							strcat(result, temp);
 						}
-						break;
-					}
+					} break;
 					default:{}
 					}
 					i = i + 1;
-					break;
-				}
+				} break;
 				case 'v':
 				{
 					switch (string[i + 2])
@@ -294,8 +287,7 @@ namespace con
 								strcat(temp, " ");
 							strcat(result, temp);
 						}
-						break;
-					}
+					} break;
 					case '3':
 					{
 						v3 value = va_arg(args, v3);
@@ -313,8 +305,7 @@ namespace con
 								strcat(temp, " ");
 							strcat(result, temp);
 						}
-						break;
-					}
+					} break;
 					case '4':
 					{
 						v4 value = va_arg(args, v4);
@@ -332,12 +323,10 @@ namespace con
 								strcat(temp, " ");
 							strcat(result, temp);
 						}
-						break;
-					}
+					} break;
 					}
 					i = i + 1;
-					break;
-				}
+				} break;
 				invalid_default()
 				}
 					i = i + 2;
@@ -359,5 +348,35 @@ namespace con
 		SetConFontColorWhite();
 		Outf("Expression (%s) result is false\n", assertStr);
 		Outf("File: %s, function: %s, line: %i.\n", file, func, line);
+	}
+
+	u8* ReadFileToBuffer(const char* fileName)
+	{
+		DWORD read;
+		HANDLE file = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, NULL, NULL);
+		LARGE_INTEGER fileSize;
+		GetFileSizeEx(file, &fileSize);
+		u8* buffer = (u8*)malloc(fileSize.QuadPart + 1);
+		ReadFile(file, buffer, fileSize.QuadPart, &read, NULL);
+		CloseHandle(file);
+		buffer[fileSize.QuadPart] = '\0';
+		return buffer;
+	}
+
+	u8* ReadFileToBuffer(const char* fileName, PLARGE_INTEGER fileSize)
+	{
+		DWORD read;
+		HANDLE file = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, NULL, NULL);
+		GetFileSizeEx(file, fileSize);
+		u8* buffer = (u8*)malloc(fileSize->QuadPart + 1);
+		ReadFile(file, buffer, fileSize->QuadPart, &read, NULL);
+		CloseHandle(file);
+		buffer[fileSize->QuadPart] = '\0';
+		return buffer;
+	}
+
+	void FreeBufferFromFile(u8* buffer)
+	{
+		free(buffer);
 	}
 }
