@@ -1,11 +1,20 @@
 # Project
 [Bb]uild/
+meta/MetaEnumGen/build/
 
 # Visual Studio
 .vs/
+src/x64/
 UnityDebug/
 UnityRelease/
 src/*.sln
 src/*.vcxproj
 src/*.filters
 src/*.user
+meta/MetaEnumGen/MetaEnum/*.sln
+meta/MetaEnumGen/MetaEnum/*.vcxproj
+meta/MetaEnumGen/MetaEnum/*.filters
+meta/MetaEnumGen/MetaEnum/*.user
+meta/MetaEnumGen/MetaEnum/Debug/
+meta/MetaEnumGen/MetaEnum/Release/
+meta/MetaEnumGen/MetaEnum/x64/

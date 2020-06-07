@@ -159,16 +159,8 @@ void SetSetting(const u8* setting, const u8* value)
 
 void InitSettingsFunc()
 {
-	DWORD read;
-
-	HANDLE file = CreateFile("../res/settings.ini", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, NULL, NULL);
 	LARGE_INTEGER fileSize;
-	GetFileSizeEx(file, &fileSize);
-	LPVOID buffervoid = malloc(fileSize.QuadPart + 1);
-	ReadFile(file, buffervoid, fileSize.QuadPart, &read, NULL);
-	CloseHandle(file);
-
-	u8* buffer = (u8*)buffervoid;
+	u8* buffer = (u8*)ReadFileToBuffer("../res/settings.ini", &fileSize);
 
 	u32 i = 0, c = 0;
 	u8 setting[32];
@@ -210,5 +202,5 @@ void InitSettingsFunc()
 		
 	}
 
-	free(buffervoid);
+	FreeBufferFromFile(buffer);
 }

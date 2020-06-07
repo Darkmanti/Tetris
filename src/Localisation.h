@@ -1,4 +1,5 @@
 #pragma once
+#include "../meta/MetaEnumGen/MetaLocEnumFunc.h"
 
 enum localisationEnumerable
 {
@@ -10,24 +11,21 @@ enum localisationEnumerable
 	NUMBERSoflocEnum
 };
 
-WCHAR** ReadLocaleTextFromFile(u8* buffer, PLARGE_INTEGER fileSize)
+WCHAR** ReadLocaleTextFromFile(void* buffer, PLARGE_INTEGER bufferSize)
 {
+	//https://www.codeproject.com/Tips/317642/Handling-simple-text-files-in-C-Cplusplus
+
+	i32 length = MultiByteToWideChar(CP_UTF8, NULL, (char*)buffer, bufferSize->QuadPart, NULL, NULL);
+	WCHAR* Wbuffer = (WCHAR*)malloc(length * sizeof(WCHAR));
+	memset(Wbuffer, 0, length * sizeof(WCHAR));
+	length = MultiByteToWideChar(CP_UTF8, NULL, (char*)buffer, bufferSize->QuadPart, Wbuffer, length);
+
+	char* proverka = GetLocEnumString(0);
+
 	WCHAR** locArray = (WCHAR**)malloc(NUMBERSoflocEnum);
+	locArray[locEnum_Tetris] = wcsstr(Wbuffer, L"locEnum_Tetris");
 
-	u32 i = 0;
-	u32 c = 0;
-
-	//MultiByteToWideChar(CP_ACP, WC_SEPCHARS, buffer, )
-
-	WCHAR* buf = (WCHAR*)buffer;
-
-	while (i < fileSize->QuadPart)
-	{
-		if (buf[i] == '=')
-			Outf("=\n");
-		i++;
-	}
-
+	free(Wbuffer);
 	return locArray;
 }
 
@@ -48,10 +46,10 @@ void InitLanguageThroughTextValue(const u8* value)
 	strcat(path, (const char*)value);
 	strcat(path, ".txt");
 
-	LARGE_INTEGER fileSize;
-	u8* buffer = ReadFileToBuffer(path, &fileSize);
+	LARGE_INTEGER bufferSize = {};
+	void* buffer = ReadFileToBuffer(path, &bufferSize);
 
-	ReadLocaleTextFromFile(buffer, &fileSize);
+	WCHAR** locArray = ReadLocaleTextFromFile(buffer, &bufferSize);
 
 	FreeBufferFromFile(buffer);
 }

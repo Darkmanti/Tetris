@@ -17,7 +17,7 @@ Font InitFont(u32 shader, i32 heightFont, i32 glyphs, const char* fileName, i32 
 {
 	Font font = {};
 
-	u8* ttf_buffer = ReadFileToBuffer(fileName);
+	u8* ttf_buffer = (u8*)ReadFileToBuffer(fileName);
 
 	u8* tempBitmap = (u8*)malloc(width * height);
 	stbtt_bakedchar* cdata = (stbtt_bakedchar*)malloc(glyphs * sizeof(stbtt_bakedchar));

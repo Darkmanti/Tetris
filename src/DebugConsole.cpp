@@ -350,32 +350,44 @@ namespace con
 		Outf("File: %s, function: %s, line: %i.\n", file, func, line);
 	}
 
-	u8* ReadFileToBuffer(const char* fileName)
+	void* ReadFileToBuffer(const char* fileName)
 	{
 		DWORD read;
 		HANDLE file = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, NULL, NULL);
 		LARGE_INTEGER fileSize;
 		GetFileSizeEx(file, &fileSize);
-		u8* buffer = (u8*)malloc(fileSize.QuadPart + 1);
+		void* buffer = malloc(fileSize.QuadPart);
+		memset(buffer, 0, fileSize.QuadPart);
 		ReadFile(file, buffer, fileSize.QuadPart, &read, NULL);
 		CloseHandle(file);
-		buffer[fileSize.QuadPart] = '\0';
+		//buffer[fileSize.QuadPart] = '\0';
 		return buffer;
 	}
 
-	u8* ReadFileToBuffer(const char* fileName, PLARGE_INTEGER fileSize)
+	void* ReadFileToBuffer(const char* fileName, PLARGE_INTEGER fileSize)
 	{
 		DWORD read;
 		HANDLE file = CreateFile(fileName, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, NULL, NULL);
 		GetFileSizeEx(file, fileSize);
-		u8* buffer = (u8*)malloc(fileSize->QuadPart + 1);
+		void* buffer = malloc(fileSize->QuadPart);
+		memset(buffer, 0, fileSize->QuadPart);
 		ReadFile(file, buffer, fileSize->QuadPart, &read, NULL);
 		CloseHandle(file);
-		buffer[fileSize->QuadPart] = '\0';
+		//buffer[fileSize->QuadPart] = '\0';
 		return buffer;
 	}
 
 	void FreeBufferFromFile(u8* buffer)
+	{
+		free(buffer);
+	}
+
+	void FreeBufferFromFile(char* buffer)
+	{
+		free(buffer);
+	}
+
+	void FreeBufferFromFile(void* buffer)
 	{
 		free(buffer);
 	}

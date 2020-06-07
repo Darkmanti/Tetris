@@ -85,6 +85,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	// Create Context OpenGL
 	CreateContextOpenGL(hMainWnd);
+	// TO DO load EXT Context OpenGL
 
 	// Load OpenGL functions
 	funcTable = LoadOpenGLFunctions();

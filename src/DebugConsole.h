@@ -11,9 +11,11 @@ namespace con
 {
 	HANDLE debugConsole = NULL;
 
-	u8* ReadFileToBuffer(const char* fileName);
-	u8* ReadFileToBuffer(const char* fileName, PLARGE_INTEGER fileSize);
+	void* ReadFileToBuffer(const char* fileName);
+	void* ReadFileToBuffer(const char* fileName, PLARGE_INTEGER fileSize);
 	void FreeBufferFromFile(u8* buffer);
+	void FreeBufferFromFile(char* buffer);
+	void FreeBufferFromFile(void* buffer);
 
 	bool InitParam(const char* CmdLine);
 
