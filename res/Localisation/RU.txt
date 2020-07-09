@@ -1,0 +1,5 @@
+locEnum_Tetris = "Тетрис"
+locEnum_Singleplayer = "Одиночная игра"
+locEnum_Multiplayer = "Сетевая игра"
+locEnum_Settings = "Настройки"
+locEnum_Exit = "Выход"

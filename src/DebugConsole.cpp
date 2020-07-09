@@ -341,13 +341,27 @@ namespace con
 		va_end(args);
 	}
 
-	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr, ...)
+	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr)
 	{
 		SetConFontColorRed();
 		Outf("[Assertion failed] ");
 		SetConFontColorWhite();
 		Outf("Expression (%s) result is false\n", assertStr);
 		Outf("File: %s, function: %s, line: %i.\n", file, func, line);
+	}
+
+	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr, const char* fmt, ...)
+	{
+		SetConFontColorRed();
+		Outf("[Assertion failed] ");
+		SetConFontColorWhite();
+		Outf("Expression (%s) result is false\n", assertStr);
+		Outf("File: %s, function: %s, line: %i.\n", file, func, line);
+
+		va_list args;
+		va_start(args, fmt);
+		Outf(fmt, &args);
+		va_end(args);
 	}
 
 	void* ReadFileToBuffer(const char* fileName)

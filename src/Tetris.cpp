@@ -5,6 +5,9 @@ void Tetris()
 	InitSettingsFunc();
 	InitMainMenuInterface(&mMenu);
 
+	InitInterface();
+	IEntity OneEntity = RegisterIEntity(0, 0, 200, "../res/Interface/container.bmp");
+
 	while (true)
 	{
 		if (PeekMessage(&msg, hMainWnd, 0, 0, PM_REMOVE))
@@ -28,6 +31,7 @@ void Tetris()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		DrawIEntity(OneEntity);
 		DrawMainMenuInterface(&mMenu);
 
 		SwapBuffers(hDC);
@@ -94,11 +98,6 @@ void Control()
 	if (KeyReleased(VK_RIGHT)) {}
 	if (KeyReleased(VK_UP)) {}
 	if (KeyReleased(VK_LBUTTON)) {}
-
-	/*for (int i = 0; i < 256; i++)
-	{
-		KeyReleased(i);
-	}*/
 
 	if (KeyDown(VK_UP))
 	{

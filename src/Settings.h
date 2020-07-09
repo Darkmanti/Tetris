@@ -13,6 +13,7 @@ struct SettingsTagStruct
 	MONITORINFOEXW monitorInfo = {};
 
 	u16 locale = 0;
+	WCHAR** locArray = NULL;
 
 	POINT cursorPos = {};
 };
@@ -120,7 +121,8 @@ void LockCursorInWindow()
 
 void SetSettingLocalisation(const u8* value)
 {
-	InitLanguageThroughTextValue(value);
+	FreeLocalisationBuffer(settings.locArray);
+	settings.locArray = InitLanguageThroughTextValue(value);
 }
 
 void ReCalcOrthoProjection(m4* ortho)

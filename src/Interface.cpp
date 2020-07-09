@@ -56,16 +56,15 @@ void InitMainMenuInterface(MainMenu* mMenu)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	free(image);
+
 	//fonts
 	u32 tempShader;
 	CreateShader(tempShader, "../res/Shaders/fontShader.vs", "../res/Shaders/fontShader.fs", "");
 	mMenu->font = InitFont(tempShader, 120, 65536, "../res/Fonts/OpenSans-Semibold.ttf", 32, 2048, 2048);
 
-	free(image);
-
 	mMenu->projection = Orthographic(0.0f, settings.MainWindowWidth, 0.0f, settings.MainWindowHeight, -100.0f, 100.0f);
 	//mMenu->projection = PerspectiveOpenGLRH(75, 1920, 1080, 0.1f, 100.0f);
-	mMenu->view = Translate(Identity4(), V3(0.0f, 0.0f, 0.0f));
 }
 
 void DrawMainMenuInterface(MainMenu* mMenu)
@@ -74,7 +73,6 @@ void DrawMainMenuInterface(MainMenu* mMenu)
 	i32 modelLoc = glGetUniformLocation(mMenu->shader, "model");
 
 	glUniformMatrix4fv(glGetUniformLocation(mMenu->shader, "projection"), 1, GL_FALSE, mMenu->projection.data);
-	glUniformMatrix4fv(glGetUniformLocation(mMenu->shader, "view"), 1, GL_FALSE, mMenu->view.data);
 
 	m4 model = Translate(Identity4(), V3(200.0f, 400.0f, 0.0f));
 	model = Scale(model, V3(400.0f, 400.0f, 0.0f));
@@ -90,7 +88,5 @@ void DrawMainMenuInterface(MainMenu* mMenu)
 
 	//model = Translate(Identity4(), V3(1000.0f, 0.0f, 0.0f));
 	//model = Scale(model, V3(0.01f, 0.01f, 0.01f));
-	f32 maxX = 0;
-	f32 maxY = 0;
-	PrintFont(mMenu->font, 200.0f, 400.0f, L"TETRIS", V3(0.631f, 0.631f, 0.631f), mMenu->projection, model, maxX, maxY);
+	PrintFont(mMenu->font, 200.0f, 400.0f, settings.locArray[locEnum_Tetris], V3(0.631f, 0.631f, 0.631f), mMenu->projection, model);
 }

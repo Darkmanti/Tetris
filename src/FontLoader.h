@@ -49,7 +49,7 @@ void DeleteFont(Font font)
 	free(font.cdata);
 }
 
-void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projection, m4 model, f32 &maxX, f32 &maxY)
+void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projection, m4 model)
 {
 	y = -y;
 	while (*string)
@@ -68,11 +68,6 @@ void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projec
 				q.x0, -q.y1, 0.0f, q.s0, q.t1,
 				q.x0, -q.y0, 0.0f, q.s0, q.t0
 			};
-
-			if (q.x1 > maxX)
-				maxX = q.x1;
-			if (-q.y0 > maxY)
-				maxY = -q.y0;
 
 			GLuint VAO, VBO;
 			glGenVertexArrays(1, &VAO);
@@ -98,6 +93,7 @@ void PrintFont(Font font, f32 x, f32 y, const WCHAR* string, v3 color, m4 projec
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindVertexArray(0);
 			glDisable(GL_BLEND);

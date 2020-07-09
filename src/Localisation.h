@@ -20,25 +20,58 @@ WCHAR** ReadLocaleTextFromFile(void* buffer, PLARGE_INTEGER bufferSize)
 	memset(Wbuffer, 0, length * sizeof(WCHAR));
 	length = MultiByteToWideChar(CP_UTF8, NULL, (char*)buffer, bufferSize->QuadPart, Wbuffer, length);
 
-	char* proverka = GetLocEnumString(0);
+	WCHAR** locArray = (WCHAR**)malloc(NUMBERSoflocEnum * sizeof(WCHAR*));
 
-	WCHAR** locArray = (WCHAR**)malloc(NUMBERSoflocEnum);
-	locArray[locEnum_Tetris] = wcsstr(Wbuffer, L"locEnum_Tetris");
+	for (u32 i = 0; i < NUMBERSoflocEnum; i++)
+	{
+		const WCHAR* targetString = GetLocEnumString(i);
+		u16 targetStringLen = wcslen(targetString);
+		WCHAR* locString = wcsstr(Wbuffer, targetString);
+		if (locString == NULL)
+		{
+			locArray[i] = (WCHAR*)malloc((targetStringLen + 11) * sizeof(WCHAR));
+			memset(locArray[i], 0, (targetStringLen + 11) * sizeof(WCHAR));
+			wcscat(locArray[i], L"not_found_");
+			wcscat(locArray[i], targetString);
+			continue;
+		}
+		locString = locString + targetStringLen + 4;
+
+		u16 length = 0;
+		while (locString[length] != L'"')
+			length++;
+
+		if (length == 0)
+		{
+			locArray[i] = (WCHAR*)malloc((targetStringLen + 7) * sizeof(WCHAR));
+			memset(locArray[i], 0, (targetStringLen + 7) * sizeof(WCHAR));
+			wcscat(locArray[i], L"zero_");
+			wcscat(locArray[i], targetString);
+			continue;
+		}
+
+		locArray[i] = (WCHAR*)malloc((length + 1) * sizeof(WCHAR));
+		memset(locArray[i], 0, (length + 1) * sizeof(WCHAR));
+		memcpy(locArray[i], locString, length * sizeof(WCHAR));
+	}
 
 	free(Wbuffer);
 	return locArray;
 }
 
-void FreeLocaleBuffer(WCHAR** buffer)
+void FreeLocalisationBuffer(WCHAR** buffer)
 {
-	for (u32 i = 0; i < NUMBERSoflocEnum; i++)
+	if (buffer != NULL)
 	{
-		free(buffer[i]);
+		for (u32 i = 0; i < NUMBERSoflocEnum; i++)
+		{
+			free(buffer[i]);
+		}
+		free(buffer);
 	}
-	free(buffer);
 }
 
-void InitLanguageThroughTextValue(const u8* value)
+WCHAR** InitLanguageThroughTextValue(const u8* value)
 {
 	char path[256];
 	memset(path, 0, 256);
@@ -52,4 +85,6 @@ void InitLanguageThroughTextValue(const u8* value)
 	WCHAR** locArray = ReadLocaleTextFromFile(buffer, &bufferSize);
 
 	FreeBufferFromFile(buffer);
+
+	return locArray;
 }

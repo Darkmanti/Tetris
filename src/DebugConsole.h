@@ -39,7 +39,8 @@ namespace con
 
 	void Outf(const char* string, ...);
 
-	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr, ...);
+	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr, const char* fmt, ...);
+	inline void LogAssert(const char* file, const char* func, u32 line, const char* assertStr);
 }
 
 #if defined(USE_NAMESPACE_CON)

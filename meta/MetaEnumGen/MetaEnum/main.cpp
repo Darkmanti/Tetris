@@ -88,7 +88,7 @@ int main()
 	// "../../../res/Localisation/Template.txt"
 	file = CreateFile(L"../../../res/Localisation/Template.txt", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	DWORD toWrite;
-	WriteFile(file, writeTemplate, strlen(Template) + ((maxStrings - 3) * 7), &toWrite, NULL);
+	WriteFile(file, writeTemplate, strlen(Template) + ((maxStrings - 3) * 6), &toWrite, NULL);
 	CloseHandle(file);
 
 	// maybe little more than 123
@@ -100,7 +100,7 @@ int main()
 	strcat(writeMetaEnumFunc, 
 R"(#pragma once
 
-char* GetLocEnumString(unsigned int number)
+const WCHAR* GetLocEnumString(unsigned int number)
 {
 	switch(number)
 	{
@@ -113,7 +113,7 @@ char* GetLocEnumString(unsigned int number)
 		strcpy(temp, "\t\tcase ");
 		_itoa(i, value, 10);
 		strcat(temp, value);
-		strcat(temp, ": { return (char*)\"");
+		strcat(temp, ": { return L\"");
 
 		unsigned int offset = 0;
 		for (unsigned int j = 0; j < i; j++)
@@ -122,11 +122,10 @@ char* GetLocEnumString(unsigned int number)
 		char* strstrsearch = strstr(temp, "\"") + 1;
 		memcpy(strstrsearch, Template + offset, massStringsLen[i]);
 		memcpy(strstrsearch + massStringsLen[i], "\"; } break;\n\0", 14);
-		//strcat(temp, "\"; } break;\n");
 		strcat(writeMetaEnumFunc, temp);
 	}
 
-	strcat(writeMetaEnumFunc, "\t\tdefault: { return (char*)\"ERROR: desired string not found\"; } break;\n");
+	strcat(writeMetaEnumFunc, "\t\tdefault: { return L\"ERROR: desired string not found\"; } break;\n");
 	strcat(writeMetaEnumFunc,
 R"(	}
 })");

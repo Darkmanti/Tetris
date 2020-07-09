@@ -51,7 +51,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	if (!RegisterClassEx(&MainWindowClass))
 	{
-		MessageBox(NULL, "error to creae a class", "error", MB_OK);
+		MessageBox(NULL, "error to create a class", "error", MB_OK);
 		return NULL;
 	}
 
@@ -142,6 +142,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				SetSettingWidth((int)(short)LOWORD(lParam));
 				SetSettingHeight((int)(short)HIWORD(lParam));
 				SetSettingFullScreen((const u8*)"0");
+				ReCalcOrthoProjection(&orthoProjection);
 				ReCalcOrthoProjection(&mMenu.projection);
 			}
 		} break;
