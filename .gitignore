@@ -2,6 +2,9 @@
 [Bb]uild/
 meta/MetaEnumGen/build/
 
+# Misc
+misc/pathto_vcvarsall.txt
+
 # Visual Studio
 .vs/
 src/x64/
