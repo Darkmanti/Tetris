@@ -1,13 +1,7 @@
 #include "Interface.h"
 
-// Temporable structures and functions
-void InitMainMenuInterface(MainMenu* mMenu)
+void InitInterfaceRenderer(rendererInterface* rendInt)
 {
-	//glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
-
 	f32 vertices[] = {
 		0.0f, 0.0f, 0.0f,  0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,  1.0f, 0.0f,
@@ -17,12 +11,12 @@ void InitMainMenuInterface(MainMenu* mMenu)
 		0.0f, 0.0f, 0.0f,  0.0f, 0.0f
 	};
 
-	glGenBuffers(1, &mMenu->VBO);
-	glGenVertexArrays(1, &mMenu->VAO);
+	glGenBuffers(1, &rendInt->VBO);
+	glGenVertexArrays(1, &rendInt->VAO);
 
-	glBindVertexArray(mMenu->VAO);
+	glBindVertexArray(rendInt->VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, mMenu->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, rendInt->VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(f32), (void*)0);
@@ -33,18 +27,25 @@ void InitMainMenuInterface(MainMenu* mMenu)
 
 	glBindVertexArray(0);
 
-	CreateShader(mMenu->shader, "../res/Shaders/shader.vs", "../res/Shaders/shader.fs", "");
+	CreateShader(rendInt->fontShader, "../res/Shaders/fontShader.vs", "../res/Shaders/fontShader.fs", "");
+	CreateShader(rendInt->objectShader, "../res/Shaders/Interfaceshader.vs", "../res/Shaders/Interfaceshader.fs", "");
+	rendInt->orthoProjection = Orthographic(0.0f, settings.MainWindowWidth, 0.0f, settings.MainWindowHeight, -1.0f, 1.0f);
+	// default Font
+	//rendInt->interfaceFont = InitFont(120, 65536, "../res/Fonts/OpenSans-Semibold.ttf", 32, 2048, 2048);
+}
 
-	glUseProgram(mMenu->shader);
-
-	// Texture =================================================================================
-	int w, h, nrComp;
+u32 LoadImageTexture(const char* path)
+{
+	int w = 0, h = 0, nrComp = 0;
 	u8* image = NULL;
 
-	image = loaders::LoadImageU8("../res/Interface/container.bmp", &w, &h, &nrComp, NULL);
+	u32 result = 0;
 
-	glGenTextures(1, &mMenu->texture);
-	glBindTexture(GL_TEXTURE_2D, mMenu->texture);
+	//image = loaders::LoadImageU8(path, &w, &h, &nrComp, NULL);
+	image = stbi_load(path, &w, &h, &nrComp, NULL);
+
+	glGenTextures(1, &result);
+	glBindTexture(GL_TEXTURE_2D, result);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -58,35 +59,55 @@ void InitMainMenuInterface(MainMenu* mMenu)
 
 	free(image);
 
-	//fonts
-	u32 tempShader;
-	CreateShader(tempShader, "../res/Shaders/fontShader.vs", "../res/Shaders/fontShader.fs", "");
-	mMenu->font = InitFont(tempShader, 120, 65536, "../res/Fonts/OpenSans-Semibold.ttf", 32, 2048, 2048);
-
-	mMenu->projection = Orthographic(0.0f, settings.MainWindowWidth, 0.0f, settings.MainWindowHeight, -100.0f, 100.0f);
-	//mMenu->projection = PerspectiveOpenGLRH(75, 1920, 1080, 0.1f, 100.0f);
+	return result;
 }
 
-void DrawMainMenuInterface(MainMenu* mMenu)
+screenInterface InitScreenInterface(u32 maxSize)
 {
-	glUseProgram(mMenu->shader);
-	i32 modelLoc = glGetUniformLocation(mMenu->shader, "model");
+	screenInterface scrInt = {};
+	scrInt.sizeRender = 0;
+	scrInt.renderGroup = (entityRenderBlock*)malloc(sizeof(entityRenderBlock) * maxSize);
+	memset(scrInt.renderGroup, 0, sizeof(entityRenderBlock) * maxSize);
+	return scrInt;
+}
 
-	glUniformMatrix4fv(glGetUniformLocation(mMenu->shader, "projection"), 1, GL_FALSE, mMenu->projection.data);
+void PushScreenInterface(screenInterface* scrInt, v3 pos, v3 scale, u32 texture, i32 text)
+{
+	scrInt->renderGroup[scrInt->sizeRender].pos = pos;
+	scrInt->renderGroup[scrInt->sizeRender].scale = scale;
+	scrInt->renderGroup[scrInt->sizeRender].texture = texture;
 
-	m4 model = Translate(Identity4(), V3(200.0f, 400.0f, 0.0f));
-	model = Scale(model, V3(400.0f, 400.0f, 0.0f));
-	_SYSTEMTIME time = {};
-	GetLocalTime(&time);
-	//model = Rotate(model, time.wMilliseconds / 4, V3(1.0f, 1.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data);
+	if (text >= 0)
+	{
+		// text init
+	}
+	scrInt->sizeRender++;
+}
 
-	glBindTexture(GL_TEXTURE_2D, mMenu->texture);
-	glBindVertexArray(mMenu->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+void DrawScreenInterface(rendererInterface* rendInt, screenInterface* scrInt)
+{
+	glUseProgram(rendInt->objectShader);
+	glBindVertexArray(rendInt->VAO);
+
+	i32 modelLoc = glGetUniformLocation(rendInt->objectShader, "model");
+	i32 projectionLoc = glGetUniformLocation(rendInt->objectShader, "projection");
+	u32 texture = 0;
+
+	for (u32 i = 0; i < scrInt->sizeRender; i++)
+	{
+		if (scrInt->renderGroup[i].texture != texture)
+		{
+			texture = scrInt->renderGroup[i].texture;
+			glBindTexture(GL_TEXTURE_2D, texture);
+		}
+
+		m4 model = Translate(Identity4(), scrInt->renderGroup[i].pos);
+		model = Scale(model, scrInt->renderGroup[i].scale);
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, model.data);
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, rendInt->orthoProjection.data);
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 	glBindVertexArray(0);
-
-	//model = Translate(Identity4(), V3(1000.0f, 0.0f, 0.0f));
-	//model = Scale(model, V3(0.01f, 0.01f, 0.01f));
-	PrintFont(mMenu->font, 200.0f, 400.0f, settings.locArray[locEnum_Tetris], V3(0.631f, 0.631f, 0.631f), mMenu->projection, model);
 }

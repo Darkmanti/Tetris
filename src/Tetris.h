@@ -2,6 +2,7 @@
 #include "WSNetwork.h"
 #include "OpenGLLoader.h"
 #include "Interface.h"
+#include "stb_image.h"
 
 bool KeyState[256] = {};
 

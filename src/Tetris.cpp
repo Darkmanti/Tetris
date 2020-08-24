@@ -2,15 +2,20 @@
 
 void Tetris()
 {
-	InitSettingsFunc();
-	InitMainMenuInterface(&mMenu);
+	glClearColor(0.0f, 0.7f, 0.0f, 1.0f);
 
-	InitInterface();
-	IEntity OneEntity = RegisterIEntity(0, 0, 200, "../res/Interface/container.bmp");
+	u32 newTexture = LoadImageTexture("../res/Interface/button.png");
+
+	screenInterface mainMenu = InitScreenInterface(5);
+	PushScreenInterface(&mainMenu, V3(0.0f, 240.0f, 0.0f), V3(150.0f, 50.0f, 0.0f), newTexture, -1);
+	PushScreenInterface(&mainMenu, V3(0.0f, 180.0f, 0.0f), V3(150.0f, 50.0f, 0.0f), newTexture, -1);
+	PushScreenInterface(&mainMenu, V3(0.0f, 120.0f, 0.0f), V3(150.0f, 50.0f, 0.0f), newTexture, -1);
+	PushScreenInterface(&mainMenu, V3(0.0f, 60.0f, 0.0f), V3(150.0f, 50.0f, 0.0f), newTexture, -1);
+	PushScreenInterface(&mainMenu, V3(0.0f, 0.0f, 0.0f), V3(150.0f, 50.0f, 0.0f), newTexture, -1);
 
 	while (true)
 	{
-		if (PeekMessage(&msg, hMainWnd, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT)
 			{
@@ -31,8 +36,7 @@ void Tetris()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		DrawIEntity(OneEntity);
-		DrawMainMenuInterface(&mMenu);
+		DrawScreenInterface(&rendInt, &mainMenu);
 
 		SwapBuffers(hDC);
 	}

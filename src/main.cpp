@@ -20,7 +20,8 @@ MSG msg = {};
 #include "Settings.h"
 #include "Tetris.h"
 
-MainMenu mMenu = {};
+// Init renderer struct
+rendererInterface rendInt = {};
 
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -68,8 +69,8 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE, // The style
 		CW_USEDEFAULT, // position window on x axis //CW_USEDEFAULT
 		CW_USEDEFAULT, // position window on y axis //CW_USEDEFAULT
-		Abs(settings.RealWindowSize.left) + Abs(settings.RealWindowSize.right), // width window //CW_USEDEFAULT
-		Abs(settings.RealWindowSize.top) + Abs(settings.RealWindowSize.bottom), // height window
+		Abs((i32)settings.RealWindowSize.left) + Abs((i32)settings.RealWindowSize.right), // width window //CW_USEDEFAULT
+		Abs((i32)settings.RealWindowSize.top) + Abs((i32)settings.RealWindowSize.bottom), // height window
 		NULL, // A handle to the parent or owner window
 		NULL, // A handle to a menu
 		hInstance, // A handle to the instance
@@ -90,8 +91,14 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	// Load OpenGL functions
 	funcTable = LoadOpenGLFunctions();
 
+	// Initializasion settings
+	InitSettingsFunc();
+
+	// Init renderer
+	InitInterfaceRenderer(&rendInt);
+
 	// Start the game process
-	glViewport(0, 0, settings.MainWindowWidth, settings.MainWindowHeight);
+	//glViewport(0, 0, settings.MainWindowWidth, settings.MainWindowHeight);
 	Tetris();
 
 	DeleteContextOpenGL(hMainWnd);
@@ -142,8 +149,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				SetSettingWidth((int)(short)LOWORD(lParam));
 				SetSettingHeight((int)(short)HIWORD(lParam));
 				SetSettingFullScreen((const u8*)"0");
-				ReCalcOrthoProjection(&orthoProjection);
-				ReCalcOrthoProjection(&mMenu.projection);
+				ReCalcOrthoProjection(&rendInt.orthoProjection);
 			}
 		} break;
 

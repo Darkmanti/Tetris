@@ -77,8 +77,8 @@ void SetSettingFullScreen(const u8* value)
 			dwStyle | WS_OVERLAPPEDWINDOW);
 
 		SetWindowPos(hMainWnd, NULL, 0, 0,
-			Abs(settings.RealWindowSize.left) + Abs(settings.RealWindowSize.right),
-			Abs(settings.RealWindowSize.top) + Abs(settings.RealWindowSize.bottom),
+			Abs((i32)settings.RealWindowSize.left) + Abs((i32)settings.RealWindowSize.right),
+			Abs((i32)settings.RealWindowSize.top) + Abs((i32)settings.RealWindowSize.bottom),
 			SWP_NOMOVE | SWP_NOZORDER |
 			SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
 
@@ -87,6 +87,7 @@ void SetSettingFullScreen(const u8* value)
 	}
 	else if (value[0] == '1')
 	{
+		// TO DO with AdjustWindowRectEx
 		SetWindowLong(hMainWnd, GWL_STYLE,
 			dwStyle & ~WS_OVERLAPPEDWINDOW);
 		SetWindowPos(hMainWnd, HWND_TOP,
@@ -161,13 +162,17 @@ void SetSetting(const u8* setting, const u8* value)
 
 void InitSettingsFunc()
 {
+	const u16 sizeofSetting = 64;
+	const u16 sizeofValue = 64;
+
 	LARGE_INTEGER fileSize;
 	u8* buffer = (u8*)ReadFileToBuffer("../res/settings.ini", &fileSize);
 
 	u32 i = 0, c = 0;
-	u8 setting[32];
-	u8 value[32];
+	u8 setting[sizeofSetting];
+	u8 value[sizeofValue];
 
+	// Need move to anther place
 	settings.monitorInfo.cbSize = sizeof(MONITORINFOEXW);
 	GetMonitorInfoW(MonitorFromWindow(hMainWnd, MONITOR_DEFAULTTOPRIMARY), &settings.monitorInfo);
 
@@ -175,8 +180,8 @@ void InitSettingsFunc()
 	while (i < fileSize.QuadPart)
 	{
 		c = 0;
-		memset(setting, 0, 32);
-		memset(value, 0, 32);
+		memset(setting, 0, sizeofSetting);
+		memset(value, 0, sizeofValue);
 
 		if (((buffer[i] >= 65) && (buffer[i] <= 90)) || ((buffer[i] >= 97) && (buffer[i] <= 122)))
 		{
