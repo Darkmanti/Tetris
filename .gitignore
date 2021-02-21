@@ -2,6 +2,9 @@
 [Bb]uild/
 meta/MetaEnumGen/build/
 
+# Resources
+[Rr]aw[Rr]esources/
+
 # Misc
 misc/pathto_vcvarsall.txt
 
