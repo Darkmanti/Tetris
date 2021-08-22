@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stb_truetype.h"
+#include "stb_image_write.h"
 
 struct Font
 {
@@ -37,6 +38,9 @@ Font InitFont(u32 shader, i32 heightFont, i32 glyphs, const char* fileName, i32 
 	font.heightBitMap = height;
 	font.widthBitMap = width;
 	font.glyphs = glyphs;
+
+	// write bitmap on disk
+	//stbi_write_bmp("bitmap.bmp", width, height, 1, tempBitmap);
 
 	FreeBufferFromFile(ttf_buffer);
 	free(tempBitmap);

@@ -31,7 +31,7 @@ void InitInterfaceRenderer(rendererInterface* rendInt)
 	CreateShader(rendInt->objectShader, "../res/Shaders/Interfaceshader.vs", "../res/Shaders/Interfaceshader.fs", "");
 	rendInt->orthoProjection = Orthographic(0.0f, settings.MainWindowWidth, 0.0f, settings.MainWindowHeight, -1.0f, 1.0f);
 	// default Font
-	//rendInt->interfaceFont = InitFont(120, 65536, "../res/Fonts/OpenSans-Semibold.ttf", 32, 2048, 2048);
+	rendInt->interfaceFont = InitFont(rendInt->fontShader, 120, 65536, "../res/Fonts/OpenSans-Semibold.ttf", 32, 2048, 2048);
 }
 
 u32 LoadImageTexture(const char* path)
@@ -41,7 +41,7 @@ u32 LoadImageTexture(const char* path)
 
 	u32 result = 0;
 
-	//image = loaders::LoadImageU8(path, &w, &h, &nrComp, NULL);
+	image = loaders::LoadImageU8(path, &w, &h, &nrComp, NULL);
 	image = stbi_load(path, &w, &h, &nrComp, NULL);
 
 	glGenTextures(1, &result);
@@ -92,6 +92,8 @@ void DrawScreenInterface(rendererInterface* rendInt, screenInterface* scrInt)
 	i32 modelLoc = glGetUniformLocation(rendInt->objectShader, "model");
 	i32 projectionLoc = glGetUniformLocation(rendInt->objectShader, "projection");
 	u32 texture = 0;
+
+	PrintFont(rendInt->interfaceFont, 200, 400, L"What???", V3(255, 0, 0), rendInt->orthoProjection, rendInt->orthoProjection);
 
 	for (u32 i = 0; i < scrInt->sizeRender; i++)
 	{
